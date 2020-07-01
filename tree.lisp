@@ -1,7 +1,7 @@
 ;;; Borrowed from https://github.com/vseloved/rutils
 ;;; See for license.
 
-(in-package :gadgets)
+(in-package :proto)
 
 (defvar *tree-leaf-p* nil "Is the node being processed a leaf or a branch?")
 (defvar *tree-stack* nil "Pointers to the parentage of the current node. Includes current node.")
@@ -119,8 +119,9 @@
                         (let ((,node ,child))
                           ,@body)
                         (,rec ,child))))))
-       (awhen ,tree
-         (,rec it))
+       (alexandria:when-let
+           ((treex ,tree))
+         (,rec treex))
        ,result)))
 
 
@@ -134,8 +135,8 @@
          (if (atom res)
        res
        (mapcar #'rec res)))))
-    (awhen tree
-      (rec it))))
+    (when tree
+      (rec tree))))
 
 (defun mapleaves (fn tree)
   "Map a one-argument function FN over each leaf node of the TREE
@@ -144,13 +145,14 @@
              (if (atom node)
                  (funcall fn node)
      (mapcar #'rec node))))
-    (awhen tree
-      (rec it))))
+    (when tree
+      (rec tree))))
 
 (defun tree-size (tree)
   "Returns the number of nodes (internal & external) in the indicated TREE."
   (let ((acc 0))
     (dotree (_ tree)
+      (declare (ignore _))
       (incf acc))
     acc))
 

@@ -12,7 +12,7 @@
 ;; it always uses the COLLECT function. If you want to collect into
 ;; multiple lists, use the WITH-COLLECT macro.
 
-(in-package :gadgets)
+(in-package :proto)
 
 ;; This should only be called inside of COLLECTING macros, but we
 ;; define it here to provide an informative error message and to make

@@ -5,15 +5,11 @@
   :description "Describe gadgets here"
   :author "Your Name <your.name@example.com>"
   :license "Specify license here"
-  :depends-on (#:cl-utilities #:alexandria #:uiop #:kebab
-               #:cl-hash-util) 
+  :depends-on (#:cl-utilities #:alexandria #:uiop #:gadgets
+               #:cl-hash-util #:kebab) 
   :components ((:file "package")
-               (:file "early")
                (:file "collecting")
-              ;; (:file "anaphorics")
-               (:file "gadgets" :depends-on (;;"anaphorics" 
-                                             "early" 
-                                             "collecting"))
+               (:file "proto" :depends-on ( "collecting"))
                (:file "dubious")
                (:file "tree")
                (:file "symtools")

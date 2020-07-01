@@ -1,4 +1,4 @@
-(in-package #:gadgets)
+(in-package #:proto)
 
 ;;; Paul Graham, On Lisp, p191
 (defmacro aif (test-form then-form &optional else-form)

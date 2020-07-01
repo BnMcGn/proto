@@ -1,4 +1,4 @@
-(in-package #:gadgets)
+(in-package #:proto)
 
 ;;;Collection of tools for tracing symbols in packages.
 

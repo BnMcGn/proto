@@ -1,6 +1,6 @@
 ;;; dubious.lisp
 
-(in-package #:gadgets)
+(in-package #:proto)
 
 ;;; Bad gadget dumping ground
 
@@ -12,7 +12,7 @@
   (symbolize entity :package 'keyword))
 
 (defun keywordize-foreign (entity)
-  (keywordize (string-upcase (to-lisp-case entity))))
+  (keywordize (string-upcase (kebab:to-lisp-case entity))))
 
 ;;; use gadgets:not-empty
 ;;;FIXME: Inefficient: don't need to know whole length of string
