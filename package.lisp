@@ -27,4 +27,6 @@
    #:funcall-in-macro
    #:strip-keywords
    #:keywordize-foreign
-   #:mapleaves))
+   #:mapleaves
+   #:dotree
+   #:*tree-stack*))
