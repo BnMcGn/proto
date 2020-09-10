@@ -65,3 +65,32 @@
 (defun tracker-different (&key initial (test (complement #'equal)))
   (tracker-same :initial initial :test test))
 
+
+(defmacro collecting-set ((&key union intersection difference (returns 'list)
+                                (test '(function eql)))
+                          &body body)
+  (with-gensyms (data intersection-d difference-d x)
+    `(,(case returns
+             (list 'alexandria:hash-table-keys)
+             (hash-table 'identity)
+             (otherwise (error "Return type not found")))
+       (let ((,data (make-hash-table :test ,test))
+             ,@(when intersection
+                     `((,intersection-d
+                        (%set-up-hash-table ,intersection ,test))))
+             ,@(when difference
+                     `((,difference-d
+                        (%set-up-hash-table ,difference ,test)))))
+         (labels
+             ((set< (item)
+                ,@(when intersection
+                        `((unless (nth-value 1 (gethash item ,intersection-d))
+                            (return-from set<))))
+                ,@(when difference
+                        `((when (nth-value 1 (gethash item ,difference-d))
+                            (return-from set<))))
+                (setf (gethash item ,data) nil)))
+           (dolist (,x ,union)
+             (set< ,x))
+           ,@body
+           ,data)))))

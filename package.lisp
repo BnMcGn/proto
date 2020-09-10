@@ -29,4 +29,5 @@
    #:keywordize-foreign
    #:mapleaves
    #:dotree
-   #:*tree-stack*))
+   #:*tree-stack*
+   #:collecting-set))
