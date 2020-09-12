@@ -30,4 +30,8 @@
    #:mapleaves
    #:dotree
    #:*tree-stack*
-   #:collecting-set))
+   #:collecting-set
+   #:defclock
+   #:extend-pathname
+   #:set<
+   #:map-tuples))

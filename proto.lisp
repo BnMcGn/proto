@@ -94,3 +94,42 @@
              (set< ,x))
            ,@body
            ,data)))))
+
+(defmacro defclock (name ticks-per-second)
+  "Defines a function that will return an integer number of ticks since it started."
+  `(eval-always
+     (def-as-func ,name (make-clock ,ticks-per-second))))
+
+;;FIXME: This should go back in gadgets, but needs some testing and debugging
+(defun extend-pathname (path &rest extensions)
+  (let ((exts
+         (apply #'concatenate 'list
+                (mapcar (lambda (x)
+                          (if (stringp x)
+                              (list x)
+                              (let ((pd (pathname-directory x)))
+                                (unless (eq (car pd) :relative)
+                                  (error "Extension must not be an absolute path"))
+                                (cdr pd))))
+                        extensions))))
+    (make-pathname :defaults path
+                   :directory (append (pathname-directory path) exts))))
+
+
+;; Too ugly for gadgets
+(defun map-tuples (&rest funcs-and-input/inputs)
+  "Like mapcar, except that multiple functions are permitted, their output - per input element - being gathered as by list*. Map-tuples can be viewed as a combination of mapcar and pairlis. All parameters are presumed to be functions except the last, which is input:
+   (map-tuples func1 func2... input1)
+To use multiple input lists (like mapcar) insert the keyword :input between functions and inputs:
+   (map-tuples func1 func2... :input input1 input2...)"
+  (multiple-value-bind (funcs inputs)
+      (multiple-value-bind (part1 part2)
+          (part-on-true (curry #'eq :input) funcs-and-input/inputs)
+        (if part2
+            (values part1 (cdr part2))
+            (values (butlast part1) (last part1))))
+    (apply #'mapcar
+           (lambda (&rest items)
+             (apply #'list*
+                    (mapcar (lambda (func) (apply func items)) funcs)))
+           inputs)))
