@@ -34,4 +34,5 @@
    #:defclock
    #:extend-pathname
    #:set<
-   #:map-tuples))
+   #:map-tuples
+   #:apply-compose))

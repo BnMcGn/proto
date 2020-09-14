@@ -133,3 +133,11 @@ To use multiple input lists (like mapcar) insert the keyword :input between func
              (apply #'list*
                     (mapcar (lambda (func) (apply func items)) funcs)))
            inputs)))
+
+(defun apply-compose (&rest functions)
+  (lambda (&rest whatever)
+    (labels ((func (data funcs)
+               (if funcs
+                   (apply (car funcs) (func data (cdr funcs)))
+                   whatever)))
+      (func whatever functions))))
