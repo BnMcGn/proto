@@ -35,4 +35,5 @@
    #:extend-pathname
    #:set<
    #:map-tuples
-   #:apply-compose))
+   #:apply-compose
+   #:keywordize))
