@@ -36,4 +36,6 @@
    #:set<
    #:map-tuples
    #:apply-compose
-   #:keywordize))
+   #:keywordize
+   #:maptree
+   #:mapbranch))

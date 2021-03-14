@@ -131,10 +131,10 @@
    that FN must continually return its input in order to map over the whole
    tree."
   (labels ((rec (node)
-       (let ((res (funcall fn node)))
-         (if (atom res)
-       res
-       (mapcar #'rec res)))))
+             (let ((res (funcall fn node)))
+               (if (atom res)
+                   res
+                   (mapcar #'rec res)))))
     (when tree
       (rec tree))))
 
@@ -164,6 +164,21 @@
         (t 1)))
 
 ;;;End borrowed
+
+(defun mapbranch (fn tree)
+  "Like maptree, but atoms will not be passed to the function"
+  (labels ((rec (node)
+             (let ((res (funcall fn node)))
+               (if (atom res)
+                   res
+                   (mapcar (lambda (x)
+                             (if (listp x)
+                                 (rec x)
+                                 x))
+                           res)))))
+    (if (listp tree)
+        (rec tree)
+        tree)))
 
 (defun leaves-search-replace (tree &key (test #'eql) match value
           valuefunc predicate)
@@ -210,7 +225,7 @@
 
 (defun tree-by-feature (items feature-func &key root
                                              (format #'identity) (identity-func #'identity))
-  "Feature-func creates a child key, by which items will be grouped under a parent. Itentity func creates a parent key to match the child key, in the case that the parent object itself can't serve as a matchable key for the children."
+  "Feature-func creates a child key, by which items will be grouped under a parent. Identity func creates a parent key to match the child key, in the case that the parent object itself can't serve as a matchable key for the children."
   (let ((data (collect-by-feature items feature-func)))
     (labels ((construct-tree (node-key)
                (collecting
