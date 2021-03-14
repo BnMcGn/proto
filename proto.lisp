@@ -141,3 +141,29 @@ To use multiple input lists (like mapcar) insert the keyword :input between func
                    (apply (car funcs) (func data (cdr funcs)))
                    whatever)))
       (func whatever functions))))
+
+(defparameter *alternate-package-marker* #\^)
+
+(defun interned-p (item &key packages package-marker *alternate-package-marker*)
+  (destructuring-bind (pack name) (split-sequence:split-sequence package-marker (symbol-name item))
+    ;; We don't accept unqualified names.
+    (when (stringp name)
+      (let ((package (if (not-empty pack)
+                         (alexandria:when-let ((fpack (find-package pack)))
+                           (if packages
+                               (and (member fpack packages) fpack)
+                               fpack))
+                         (find-package :keyword))))
+        (find-symbol name package)))))
+
+(defun swap-package-marker (stream char)
+  (declare (ignore char))
+  (read-char-no-hang stream)
+  *alternate-package-marker*)
+
+(defparameter *limited-readtable* (copy-readtable safe-read::%safe-readtable%))
+(set-macro-character #\: #'swap-package-marker nil *limited-readtable*)
+
+(defun limited-read (stream)
+  (let ((safe-read::%safe-readtable% *limited-readtable*))
+    (safe-read:safe-read stream)))
