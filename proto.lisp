@@ -167,3 +167,41 @@ To use multiple input lists (like mapcar) insert the keyword :input between func
 (defun limited-read (stream)
   (let ((safe-read::%safe-readtable% *limited-readtable*))
     (safe-read:safe-read stream)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Limited read
+;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defclass limited-reader nil nil)
+(defvar *limited-reader-predicate* nil)
+
+(defmethod eclector.reader:interpret-symbol ((client limited-reader)
+                                             input-stream package-indicator symbol-name internp )
+  (if (funcall *limited-reader-predicate* symbol-name package-indicator)
+      (call-next-method)
+      (error "Found an illegal token!")))
+
+(defmethod eclector.reader:interpret-symbol-token ((client limited-reader) input-stream token position-package-marker-1 position-package-marker-2)
+  (call-next-method))
+
+(defun limited-read-error (stream char)
+  (declare (ignore stream char))
+  (error "Unwanted macro char"))
+
+(defparameter *limited-readtable* (copy-readtable nil))
+(dolist (char '(#\# #\|))
+  (set-macro-character char #'limited-read-error nil *limited-readtable*))
+
+(defun limited-reader (stream symbol-predicate)
+  (let ((eclector.reader:*client* (make-instance 'limited-reader))
+        (*limited-reader-predicate* symbol-predicate)
+        (*readtable* *limited-readtable*))
+    (eclector.reader:read stream)))
+
+#|
+
+(defparameter fname (car (uiop:directory-files "~/tmp/opins/")))
+(with-open-file (s fname) (let ((eclector.reader::*client* 'warflagger::wf-reader))(eclector.reader:read s)))
+
+|#

@@ -6,7 +6,7 @@
   :author "Your Name <your.name@example.com>"
   :license "Specify license here"
   :depends-on (#:cl-utilities #:alexandria #:uiop #:gadgets
-               #:cl-hash-util #:kebab #:safe-read) 
+               #:cl-hash-util #:kebab #:safe-read #:eclector)
   :components ((:file "package")
                (:file "collecting")
                (:file "proto" :depends-on ( "collecting"))
