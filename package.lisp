@@ -38,4 +38,5 @@
    #:apply-compose
    #:keywordize
    #:maptree
-   #:mapbranch))
+   #:mapbranch
+   #:limited-reader))
