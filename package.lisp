@@ -23,7 +23,6 @@
    #:watch-for-recompile
    #:dependency-auto-watcher
    #:keyword-splitter
-   #:tree-by-feature
    #:funcall-in-macro
    #:strip-keywords
    #:keywordize-foreign
@@ -39,4 +38,6 @@
    #:keywordize
    #:maptree
    #:mapbranch
-   #:limited-reader))
+   #:limited-reader
+   #:tree-by-parent
+   #:tree-by-children))

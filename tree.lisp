@@ -223,9 +223,13 @@
     (dolist (itm items)
       (collect (funcall feature-func itm) itm))))
 
-(defun tree-by-feature (items feature-func &key root
+(defun tree-by-parent (items feature-func &key root
                                              (format #'identity) (identity-func #'identity))
-  "Feature-func creates a child key, by which items will be grouped under a parent. Identity func creates a parent key to match the child key, in the case that the parent object itself can't serve as a matchable key for the children."
+  "Builds a tree from a collection of ITEMS. Each item must be able to identify its parent when passed to FEATURE-FUNC. Items at the top of the tree will normally return NIL. If another value will indicate the top of the tree, set it with :ROOT. Note that the root item will not be stored in the tree.
+
+If parent items cannot be directly matched by the value returned from FEATURE-FUNC, you may specify a matchable value with :IDENTITY-FUNC.
+
+Items will be stored in the tree as found. To change this behavior, supply a transformation function with :FORMAT."
   (let ((data (collect-by-feature items feature-func)))
     (labels ((construct-tree (node-key)
                (collecting
@@ -235,3 +239,11 @@
                              (construct-tree
                               (funcall identity-func item))))))))
       (construct-tree root))))
+
+(defun tree-by-children (root children-func &key (format #'identity))
+  "Builds a tree from ROOT in a situation where each node can identify its own children. CHILDREN-FUNC, given a node, should return a list of the node's children. You may customize the storage of nodes in the tree with the :FORMAT function"
+  (let ((children (funcall children-func root)))
+    (if children
+        (cons (funcall format root)
+              (mapcar (lambda (x) (tree-by-children x children-func :format format)) children))
+        (funcall format root))))
