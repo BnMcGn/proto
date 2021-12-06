@@ -40,4 +40,6 @@
    #:mapbranch
    #:limited-reader
    #:tree-by-parent
-   #:tree-by-children))
+   #:tree-by-children
+   #:fuzzy-search-indices
+   #:fuzzy-search))

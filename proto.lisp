@@ -178,3 +178,53 @@ To use multiple input lists (like mapcar) insert the keyword :input between func
 (with-open-file (s fname) (let ((eclector.reader::*client* 'warflagger::wf-reader))(eclector.reader:read s)))
 
 |#
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Fuzzy searcher
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun fuzzy-is-present (spec text test)
+  (let ((spos 0))
+    (dotimes (i (length text))
+      (when (funcall test (elt text i) (elt spec spos))
+        (incf spos))
+      (when (eq spos (length spec))
+        (return-from fuzzy-is-present text)))
+    nil))
+
+
+(defun fuzzy-search-indices (spec text &key max-length-ratio (max-results 0) (test #'eq))
+  (when (and (not-empty spec) (not-empty text))
+    (let* ((accum nil)
+           (slen (length spec))
+           (tlen (length text))
+           (first (position (elt spec 0) text :test test))
+           (last (position (nelt spec 0) text :test test :from-end t))
+           (mlen (if max-length-ratio (floor (* slen max-length-ratio)) (- last first))))
+      (when (or (< last first)
+                (< (- last first) (length spec)))
+        (return-from fuzzy-search-indices nil))
+      (labels ((finish () (nreverse accum))
+               (accumulate (n m)
+                 (push (list n m) accum)
+                 (when (eq (decf max-results) 0)
+                   (return-from fuzzy-search-indices (finish)))))
+        (let ((starts (remove-if-not
+                       (lambda (i) (funcall test (elt text first) (elt text i)))
+                       (range first (- (1+ last) (1- slen))))))
+          (loop for rlen from slen to mlen
+                do (dolist (start starts)
+                     (when (< (+ start rlen) tlen)
+                       (when (funcall test (elt text (+ start rlen)) (nelt spec 0))
+                         (when (fuzzy-is-present spec (subseq text start (+ start rlen)) test)
+                           (accumulate start (1+ (+ start rlen)))))))))
+        (finish)))))
+
+(defun fuzzy-search (spec text &key max-length-ratio (max-results 0) (test #'eq))
+  (loop
+    for (start end)
+      in (fuzzy-search-indices
+          spec text
+          :max-length-ratio max-length-ratio :max-results max-results :test test)
+    collect (subseq text start end)))
