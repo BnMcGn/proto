@@ -42,4 +42,5 @@
    #:tree-by-parent
    #:tree-by-children
    #:fuzzy-search-indices
-   #:fuzzy-search))
+   #:fuzzy-search
+   #:illegal-token))

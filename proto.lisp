@@ -149,11 +149,17 @@ To use multiple input lists (like mapcar) insert the keyword :input between func
 (defclass limited-reader nil nil)
 (defvar *limited-reader-predicate* nil)
 
+(define-condition illegal-token (error)
+  ((token :initarg :token
+          :reader token))
+  (:report (lambda (c stream)
+             (format stream "Found an illegal token: ~a" (token c)))))
+
 (defmethod eclector.reader:interpret-symbol ((client limited-reader)
-                                             input-stream package-indicator symbol-name internp )
-  (if (funcall *limited-reader-predicate* symbol-name package-indicator)
-      (call-next-method)
-      (error "Found an illegal token!")))
+                                             input-stream package-indicator symbol-name internp)
+  (when (funcall *limited-reader-predicate* symbol-name package-indicator)
+    (cerror (make-condition 'illegal-token :token symbol-name)))
+  (call-next-method))
 
 (defmethod eclector.reader:interpret-symbol-token ((client limited-reader) input-stream token position-package-marker-1 position-package-marker-2)
   (call-next-method))
@@ -178,7 +184,6 @@ To use multiple input lists (like mapcar) insert the keyword :input between func
 (with-open-file (s fname) (let ((eclector.reader::*client* 'warflagger::wf-reader))(eclector.reader:read s)))
 
 |#
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Fuzzy searcher
