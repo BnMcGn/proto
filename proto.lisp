@@ -157,8 +157,8 @@ To use multiple input lists (like mapcar) insert the keyword :input between func
 
 (defmethod eclector.reader:interpret-symbol ((client limited-reader)
                                              input-stream package-indicator symbol-name internp)
-  (when (funcall *limited-reader-predicate* symbol-name package-indicator)
-    (cerror (make-condition 'illegal-token :token symbol-name)))
+  (unless (funcall *limited-reader-predicate* symbol-name package-indicator)
+    (error (make-condition 'illegal-token :token symbol-name)))
   (call-next-method))
 
 (defmethod eclector.reader:interpret-symbol-token ((client limited-reader) input-stream token position-package-marker-1 position-package-marker-2)
