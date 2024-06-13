@@ -43,4 +43,5 @@
    #:tree-by-children
    #:fuzzy-search-indices
    #:fuzzy-search
-   #:illegal-token))
+   #:illegal-token
+   #:print-current-backtrace))

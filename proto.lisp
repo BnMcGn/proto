@@ -142,6 +142,11 @@ To use multiple input lists (like mapcar) insert the keyword :input between func
                    whatever)))
       (func whatever functions))))
 
+(defun print-current-backtrace ()
+  (handler-case
+      (error "NOT AN ERROR")
+    (t (e) (trivial-backtrace:print-backtrace e))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Limited reader
 ;;;;;;;;;;;;;;;;;;;;;;;;;
