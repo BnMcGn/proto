@@ -7,7 +7,7 @@
   :license "Specify license here"
   :depends-on (#:cl-utilities #:alexandria #:uiop #:gadgets
                #:cl-hash-util #:kebab #:safe-read #:eclector 
-               #:trivial-stacktrace)
+               #:trivial-backtrace)
   :components ((:file "package")
                (:file "collecting")
                (:file "proto" :depends-on ( "collecting"))
