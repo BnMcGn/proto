@@ -147,6 +147,16 @@ To use multiple input lists (like mapcar) insert the keyword :input between func
       (error "NOT AN ERROR")
     (t (e) (trivial-backtrace:print-backtrace e))))
 
+;;FIXME: func should be once-only
+(defmacro shadow-func (name func &body body)
+  (with-gensyms (saved-func)
+    `(let ((,saved-func (symbol-function ',name)))
+       (unwind-protect
+            (progn
+              (setf (symbol-function ',name) ,func)
+              ,@body)
+         (setf (symbol-function ',name) ,saved-func)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Limited reader
 ;;;;;;;;;;;;;;;;;;;;;;;;;
