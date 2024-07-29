@@ -44,4 +44,5 @@
    #:fuzzy-search-indices
    #:fuzzy-search
    #:illegal-token
-   #:print-current-backtrace))
+   #:print-current-backtrace
+   #:shadow-func))
