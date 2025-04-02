@@ -45,4 +45,5 @@
    #:fuzzy-search
    #:illegal-token
    #:print-current-backtrace
-   #:shadow-func))
+   #:shadow-func
+   #:assoc-cdr2))

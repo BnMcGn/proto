@@ -11,6 +11,7 @@
 
 ;; FIXME: Text seems to be stuck in pdf-stream objects. Not sure how much work to extract...
 ;; leaving for now
+;; see: https://github.com/py-pdf/pypdf
 
 (defgeneric children ())
 

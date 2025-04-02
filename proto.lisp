@@ -134,6 +134,12 @@ To use multiple input lists (like mapcar) insert the keyword :input between func
                     (mapcar (lambda (func) (apply func items)) funcs)))
            inputs)))
 
+(defun assoc-cdr2 (tkey alist &key (test #'eql))
+  "A shortcut for (cdr (assoc ...)) to give immediate access to an alist
+value."
+  (cdr (assoc tkey alist :test test)))
+
+
 (defun apply-compose (&rest functions)
   (lambda (&rest whatever)
     (labels ((func (data funcs)
